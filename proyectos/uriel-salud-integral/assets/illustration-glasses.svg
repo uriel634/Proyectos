@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Ilustración de lentes graduados">
+  <circle cx="200" cy="200" r="170" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="200" cy="205" r="128" fill="#ED8403" opacity="0.14"/>
+
+  <!-- sparkle accents -->
+  <g fill="#FFFFFF" opacity="0.85">
+    <path d="M320,90 l6,16 16,6 -16,6 -6,16 -6,-16 -16,-6 16,-6 z"/>
+    <circle cx="70" cy="300" r="6"/>
+    <circle cx="90" cy="120" r="4"/>
+  </g>
+
+  <!-- Bridge -->
+  <path d="M182,206 Q200,190 218,206" fill="none" stroke="#0D0D0D" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Temple arms -->
+  <path d="M104,196 L54,178" fill="none" stroke="#0D0D0D" stroke-width="10" stroke-linecap="round"/>
+  <path d="M296,196 L346,178" fill="none" stroke="#0D0D0D" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Left lens -->
+  <circle cx="140" cy="212" r="72" fill="none" stroke="#0D0D0D" stroke-width="14"/>
+  <circle cx="140" cy="212" r="62" fill="#33A5A2" opacity="0.55"/>
+  <path d="M104,182 A62,62 0 0 1 176,186" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Right lens -->
+  <circle cx="260" cy="212" r="72" fill="none" stroke="#0D0D0D" stroke-width="14"/>
+  <circle cx="260" cy="212" r="62" fill="#33A5A2" opacity="0.55"/>
+  <path d="M224,182 A62,62 0 0 1 296,186" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.7"/>
+</svg>

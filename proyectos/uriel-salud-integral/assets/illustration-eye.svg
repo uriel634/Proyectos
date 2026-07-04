@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Ilustración de examen visual">
+  <circle cx="200" cy="200" r="170" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="200" cy="205" r="128" fill="#33A5A2" opacity="0.14"/>
+
+  <!-- Snellen-style chart accent, top left -->
+  <g fill="#FFFFFF" opacity="0.85">
+    <rect x="46" y="70" width="46" height="10" rx="3"/>
+    <rect x="46" y="90" width="32" height="8" rx="3"/>
+    <rect x="46" y="106" width="22" height="7" rx="3"/>
+  </g>
+
+  <!-- Eye shape -->
+  <path d="M45,210 C110,120 290,120 355,210 C290,300 110,300 45,210 Z" fill="#ED8403"/>
+  <path d="M45,210 C110,120 290,120 355,210 C290,300 110,300 45,210 Z" fill="none" stroke="#C96E02" stroke-width="4" opacity="0.4"/>
+
+  <!-- Eyelashes -->
+  <g stroke="#0D0D0D" stroke-width="6" stroke-linecap="round">
+    <line x1="70" y1="178" x2="52" y2="156"/>
+    <line x1="100" y1="152" x2="88" y2="124"/>
+    <line x1="140" y1="132" x2="134" y2="102"/>
+  </g>
+  <g stroke="#0D0D0D" stroke-width="6" stroke-linecap="round">
+    <line x1="330" y1="178" x2="348" y2="156"/>
+    <line x1="300" y1="152" x2="312" y2="124"/>
+    <line x1="260" y1="132" x2="266" y2="102"/>
+  </g>
+
+  <!-- Sclera -->
+  <circle cx="200" cy="210" r="88" fill="#FFFFFF"/>
+  <!-- Iris -->
+  <circle cx="200" cy="210" r="58" fill="#33A5A2"/>
+  <circle cx="200" cy="210" r="58" fill="none" stroke="#257A78" stroke-width="3"/>
+  <!-- Pupil -->
+  <circle cx="200" cy="210" r="26" fill="#0D0D0D"/>
+  <!-- Highlight -->
+  <circle cx="184" cy="192" r="10" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="222" cy="228" r="5" fill="#FFFFFF" opacity="0.5"/>
+
+  <!-- Small orbit rays suggesting clarity/vision -->
+  <g stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.55">
+    <line x1="200" y1="96" x2="200" y2="80"/>
+    <line x1="118" y1="130" x2="106" y2="118"/>
+    <line x1="282" y1="130" x2="294" y2="118"/>
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Ilustración dental">
+  <circle cx="200" cy="200" r="170" fill="#FFFFFF" opacity="0.12"/>
+  <circle cx="200" cy="205" r="128" fill="#33A5A2" opacity="0.14"/>
+
+  <!-- shadow -->
+  <ellipse cx="200" cy="322" rx="70" ry="14" fill="#0D0D0D" opacity="0.12"/>
+
+  <!-- Tooth -->
+  <path d="M200,86
+           c-42,0 -72,28 -72,66
+           c0,23 8,39 8,63
+           c0,31 -16,47 -16,79
+           c0,25 16,43 35,43
+           c18,0 26,-23 26,-49
+           c0,-16 8,-26 21,-26
+           c13,0 21,10 21,26
+           c0,26 8,49 26,49
+           c19,0 35,-18 35,-43
+           c0,-32 -16,-48 -16,-79
+           c0,-24 8,-40 8,-63
+           c0,-38 -30,-66 -72,-66
+           z" fill="#FFFFFF" stroke="#D8D6D2" stroke-width="3"/>
+
+  <!-- shine -->
+  <path d="M160,120 c-16,10 -24,26 -24,42" fill="none" stroke="#33A5A2" stroke-width="8" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- sparkles -->
+  <g fill="#ED8403">
+    <path d="M300,110 l5,13 13,5 -13,5 -5,13 -5,-13 -13,-5 13,-5 z"/>
+    <circle cx="96" cy="150" r="6"/>
+    <circle cx="316" cy="180" r="4"/>
+  </g>
+</svg>
