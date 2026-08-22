@@ -1,0 +1,19 @@
+{
+  "name": "pedidoclaro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de gestión de pedidos para distribuidoras y comercializadoras en México.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 execute pedidoclaro-db --local --file=migrations/0001_init.sql",
+    "db:migrate:remote": "wrangler d1 execute pedidoclaro-db --remote --file=migrations/0001_init.sql",
+    "pages:deploy": "wrangler pages deploy public --project-name=pedidoclaro-frontend"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240208.0",
+    "typescript": "^5.4.0",
+    "wrangler": "^3.114.14"
+  }
+}

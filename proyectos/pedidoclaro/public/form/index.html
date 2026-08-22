@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PedidoClaro — Nuevo pedido</title>
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --bg-card: #161616;
+    --bg-field: #1F1F1F;
+    --border: #2A2A2A;
+    --text: #F2F2F2;
+    --text-dim: #9A9A9A;
+    --accent: #FF5C00;
+    --accent-dim: #C94800;
+    --ok: #2ECC71;
+    --error: #FF4D4D;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 64px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    margin: 0 0 4px;
+  }
+
+  .subtitulo {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin: 16px 0 6px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--bg-field);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:active { background: var(--accent-dim); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .mensaje {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    display: none;
+  }
+
+  .mensaje.ok {
+    display: block;
+    background: rgba(46, 204, 113, 0.12);
+    border: 1px solid var(--ok);
+    color: var(--ok);
+  }
+
+  .mensaje.error {
+    display: block;
+    background: rgba(255, 77, 77, 0.12);
+    border: 1px solid var(--error);
+    color: var(--error);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Nuevo pedido</h1>
+    <p class="subtitulo">PedidoClaro · Registro rápido para vendedores</p>
+
+    <form id="form-pedido">
+      <label for="cliente_nombre">Nombre del cliente</label>
+      <input type="text" id="cliente_nombre" name="cliente_nombre" required autocomplete="off">
+
+      <label for="cliente_telefono">Teléfono del cliente</label>
+      <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52..." required autocomplete="off">
+
+      <label for="productos">Productos</label>
+      <textarea id="productos" name="productos" placeholder="2 cajas de refresco, 1 paquete de servilletas..." required></textarea>
+
+      <label for="monto">Monto (MXN)</label>
+      <input type="number" id="monto" name="monto" min="0.01" step="0.01" required>
+
+      <label for="fecha_entrega">Fecha de entrega</label>
+      <input type="date" id="fecha_entrega" name="fecha_entrega" required>
+
+      <label for="vendedor_id">Vendedor</label>
+      <select id="vendedor_id" name="vendedor_id" required>
+        <option value="" disabled selected>Selecciona tu nombre</option>
+      </select>
+
+      <label for="notas">Notas (opcional)</label>
+      <textarea id="notas" name="notas" placeholder="Referencias de entrega, instrucciones especiales..."></textarea>
+
+      <button type="submit" id="btn-enviar">Registrar pedido</button>
+    </form>
+
+    <div class="mensaje" id="mensaje"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
