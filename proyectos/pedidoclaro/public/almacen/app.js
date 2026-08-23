@@ -5,10 +5,34 @@
   const divActualizado = document.getElementById('actualizado');
 
   const ETIQUETAS_ESTATUS = { nuevo: 'Nuevo', preparando: 'Preparando' };
-  const SIGUIENTE_ACCION = {
-    nuevo: { proximoEstatus: 'preparando', texto: 'Empezar a preparar' },
-    preparando: { proximoEstatus: 'en_camino', texto: 'Listo, sale a ruta' },
-  };
+
+  const UMBRAL_ALERTA_MIN = 20;
+  const UMBRAL_CRITICO_MIN = 30;
+
+  function siguienteAccion(p) {
+    if (p.estatus === 'nuevo') {
+      return { proximoEstatus: 'preparando', texto: 'Empezar a preparar' };
+    }
+    if (p.estatus === 'preparando') {
+      return p.tipo_entrega === 'tienda'
+        ? { proximoEstatus: 'en_camino', texto: 'Marcar listo para recoger' }
+        : { proximoEstatus: 'en_camino', texto: 'Listo, sale a ruta' };
+    }
+    return null;
+  }
+
+  function chipEspera(p) {
+    if (p.estatus !== 'preparando') return null;
+    const actualizadoUtc = p.updated_at.replace(' ', 'T') + 'Z';
+    const minutos = Math.floor((Date.now() - new Date(actualizadoUtc).getTime()) / 60000);
+    if (minutos < UMBRAL_ALERTA_MIN) {
+      return { clase: 'espera-ok', texto: `🟢 ${minutos} min preparando` };
+    }
+    if (minutos < UMBRAL_CRITICO_MIN) {
+      return { clase: 'espera-alerta', texto: `🟡 ${minutos} min preparando` };
+    }
+    return { clase: 'espera-critico', texto: `🔴 ${minutos} min preparando` };
+  }
 
   filtroFecha.value = new Date().toISOString().slice(0, 10);
 
@@ -38,6 +62,8 @@
     const div = document.createElement('div');
     div.className = 'pedido';
 
+    const etiquetaTipo = p.tipo_entrega === 'tienda' ? '🏬 Tienda' : '🚚 Domicilio';
+
     const cabeza = document.createElement('div');
     cabeza.className = 'pedido-cabeza';
     cabeza.innerHTML = `
@@ -45,7 +71,10 @@
         <div class="pedido-cliente">${p.cliente_nombre}</div>
         <div class="pedido-entrega">Vendedor: ${p.vendedor_nombre} · Entrega: ${p.fecha_entrega}</div>
       </div>
-      <span class="badge badge-${p.estatus}">${ETIQUETAS_ESTATUS[p.estatus] || p.estatus}</span>
+      <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
+        <span class="badge badge-${p.estatus}">${ETIQUETAS_ESTATUS[p.estatus] || p.estatus}</span>
+        <span class="badge badge-tipo">${etiquetaTipo}</span>
+      </div>
     `;
 
     const productos = document.createElement('div');
@@ -54,6 +83,14 @@
 
     div.append(cabeza, productos);
 
+    const espera = chipEspera(p);
+    if (espera) {
+      const chip = document.createElement('div');
+      chip.className = `espera ${espera.clase}`;
+      chip.textContent = espera.texto;
+      div.appendChild(chip);
+    }
+
     if (p.notas) {
       const notas = document.createElement('div');
       notas.className = 'pedido-notas';
@@ -61,7 +98,7 @@
       div.appendChild(notas);
     }
 
-    const accion = SIGUIENTE_ACCION[p.estatus];
+    const accion = siguienteAccion(p);
     if (accion) {
       const boton = document.createElement('button');
       boton.className = 'accion';

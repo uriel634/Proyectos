@@ -10,6 +10,7 @@ export interface ConfirmacionClienteParams {
   monto: number;
   fecha_entrega: string;
   vendedor_nombre: string;
+  tipo_entrega: string;
 }
 
 /**
@@ -20,16 +21,22 @@ export async function enviarConfirmacionCliente(
   env: Env,
   p: ConfirmacionClienteParams
 ): Promise<ResultadoEnvio> {
+  const lineaEntrega =
+    p.tipo_entrega === 'tienda'
+      ? 'Pasarás a recogerlo a tienda.'
+      : 'Te lo llevamos a tu domicilio.';
+
   const mensaje = `✅ *Pedido confirmado*
 
 Hola ${p.cliente_nombre}, tu pedido fue registrado:
 
 📦 ${p.productos}
 💰 $${p.monto} MXN
-🗓 Entrega: ${p.fecha_entrega}
+🗓 Fecha: ${p.fecha_entrega}
 👤 Tu vendedor: ${p.vendedor_nombre}
 
-Te avisamos cuando salga a ruta.`;
+${lineaEntrega}
+Te avisamos en cuanto esté listo.`;
 
   const resultado = await enviarWhatsApp(env, p.cliente_telefono, mensaje);
 

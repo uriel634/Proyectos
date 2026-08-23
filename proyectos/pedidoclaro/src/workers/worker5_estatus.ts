@@ -11,6 +11,7 @@ interface FilaPedido {
   monto: number;
   cliente_nombre: string;
   cliente_telefono: string;
+  tipo_entrega: string;
 }
 
 export async function handleActualizarEstatus(request: Request, env: Env, pedidoId: string): Promise<Response> {
@@ -31,7 +32,7 @@ export async function handleActualizarEstatus(request: Request, env: Env, pedido
 
   try {
     const pedido = await env.DB.prepare(
-      `SELECT p.id, p.monto, c.nombre as cliente_nombre, c.telefono as cliente_telefono
+      `SELECT p.id, p.monto, p.tipo_entrega, c.nombre as cliente_nombre, c.telefono as cliente_telefono
        FROM pedidos p JOIN clientes c ON c.id = p.cliente_id
        WHERE p.id = ?`
     )
@@ -46,8 +47,15 @@ export async function handleActualizarEstatus(request: Request, env: Env, pedido
       .bind(estatus, pedidoId)
       .run();
 
+    const esTienda = pedido.tipo_entrega === 'tienda';
+
     if (estatus === 'en_camino') {
-      const mensaje = `🚚 *Tu pedido va en camino*
+      const mensaje = esTienda
+        ? `📦 *Tu pedido ya está listo*
+
+${pedido.cliente_nombre}, ya puedes pasar a recogerlo a tienda.
+¿Alguna duda? Responde aquí.`
+        : `🚚 *Tu pedido va en camino*
 
 ${pedido.cliente_nombre}, tu pedido salió a entrega.
 Llega en aproximadamente 30–40 min.
@@ -61,7 +69,11 @@ Llega en aproximadamente 30–40 min.
         enviado: resultado.enviado,
       });
     } else if (estatus === 'entregado') {
-      const mensaje = `✅ *Pedido entregado*
+      const mensaje = esTienda
+        ? `✅ *Pedido recogido*
+
+${pedido.cliente_nombre}, confirmamos que recogiste tu pedido. ¡Gracias por tu preferencia!`
+        : `✅ *Pedido entregado*
 
 ${pedido.cliente_nombre}, confirmamos que tu pedido fue entregado. ¡Gracias por tu preferencia!`;
       const resultado = await enviarWhatsApp(env, pedido.cliente_telefono, mensaje);

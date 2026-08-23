@@ -46,14 +46,15 @@ export interface NuevoPedido {
   notas: string | null;
   pos_origen: string;
   pos_ref_id: string | null;
+  tipo_entrega: string;
 }
 
 export async function crearPedido(db: D1Database, pedido: NuevoPedido): Promise<void> {
   await db
     .prepare(
       `INSERT INTO pedidos
-         (id, cliente_id, vendedor_id, productos, monto, fecha_entrega, estatus, notas, pos_origen, pos_ref_id)
-       VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?, ?, ?)`
+         (id, cliente_id, vendedor_id, productos, monto, fecha_entrega, estatus, notas, pos_origen, pos_ref_id, tipo_entrega)
+       VALUES (?, ?, ?, ?, ?, ?, 'nuevo', ?, ?, ?, ?)`
     )
     .bind(
       pedido.id,
@@ -64,7 +65,8 @@ export async function crearPedido(db: D1Database, pedido: NuevoPedido): Promise<
       pedido.fecha_entrega,
       pedido.notas,
       pedido.pos_origen,
-      pedido.pos_ref_id
+      pedido.pos_ref_id,
+      pedido.tipo_entrega
     )
     .run();
 }

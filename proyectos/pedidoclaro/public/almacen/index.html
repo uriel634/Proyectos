@@ -99,6 +99,26 @@
 
   .badge-nuevo { background: var(--c-nuevo); }
   .badge-preparando { background: var(--c-preparando); }
+  .badge-tipo {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .espera {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  .espera-ok { background: rgba(46, 204, 113, 0.15); color: #4CD787; }
+  .espera-alerta { background: rgba(255, 201, 77, 0.18); color: var(--c-preparando); }
+  .espera-critico { background: rgba(255, 77, 77, 0.18); color: #FF6B6B; }
 
   .pedido-productos {
     white-space: pre-wrap;

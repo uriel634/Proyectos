@@ -29,6 +29,11 @@
     filtroVendedor.appendChild(opt);
   }
 
+  function etiquetaEstatus(p) {
+    if (p.estatus === 'en_camino' && p.tipo_entrega === 'tienda') return 'Listo para recoger';
+    return ETIQUETAS_ESTATUS[p.estatus] || p.estatus;
+  }
+
   function formatoMoneda(n) {
     return '$' + Number(n || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
@@ -63,8 +68,10 @@
   function filaPedido(p) {
     const tr = document.createElement('tr');
 
+    const etiquetaTipo = p.tipo_entrega === 'tienda' ? '🏬 Tienda' : '🚚 Domicilio';
+
     const tdCliente = document.createElement('td');
-    tdCliente.innerHTML = `${p.cliente_nombre}<br><span style="color:var(--text-dim);font-size:0.78rem;">${p.cliente_telefono}</span>`;
+    tdCliente.innerHTML = `${p.cliente_nombre}<br><span style="color:var(--text-dim);font-size:0.78rem;">${p.cliente_telefono} · ${etiquetaTipo}</span>`;
 
     const tdProductos = document.createElement('td');
     tdProductos.className = 'productos';
@@ -82,7 +89,7 @@
     const tdEstatus = document.createElement('td');
     const badge = document.createElement('span');
     badge.className = `badge badge-${p.estatus}`;
-    badge.textContent = ETIQUETAS_ESTATUS[p.estatus] || p.estatus;
+    badge.textContent = etiquetaEstatus(p);
     tdEstatus.appendChild(badge);
 
     const selectEstatus = document.createElement('select');
@@ -90,7 +97,7 @@
     for (const e of ESTATUS) {
       const opt = document.createElement('option');
       opt.value = e;
-      opt.textContent = ETIQUETAS_ESTATUS[e];
+      opt.textContent = e === 'en_camino' && p.tipo_entrega === 'tienda' ? 'Listo para recoger' : ETIQUETAS_ESTATUS[e];
       if (e === p.estatus) opt.selected = true;
       selectEstatus.appendChild(opt);
     }

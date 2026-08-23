@@ -28,6 +28,7 @@
       productos: form.productos.value.trim(),
       monto: parseFloat(form.monto.value),
       fecha_entrega: form.fecha_entrega.value,
+      tipo_entrega: form.tipo_entrega.value,
       vendedor_id: form.vendedor_id.value,
       notas: form.notas.value.trim() || undefined,
     };

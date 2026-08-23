@@ -13,7 +13,9 @@ interface FilaPedido {
   fecha_entrega: string;
   estatus: string;
   notas: string | null;
+  tipo_entrega: string;
   created_at: string;
+  updated_at: string;
 }
 
 interface FilaKpi {
@@ -73,7 +75,7 @@ export async function handleConsultarPedidos(request: Request, env: Env): Promis
     const pedidosResult = await env.DB.prepare(
       `SELECT p.id, c.nombre as cliente_nombre, c.telefono as cliente_telefono,
               v.nombre as vendedor_nombre, p.productos, p.monto, p.fecha_entrega,
-              p.estatus, p.notas, p.created_at
+              p.estatus, p.notas, p.tipo_entrega, p.created_at, p.updated_at
        FROM pedidos p
        JOIN clientes c ON c.id = p.cliente_id
        JOIN vendedores v ON v.id = p.vendedor_id

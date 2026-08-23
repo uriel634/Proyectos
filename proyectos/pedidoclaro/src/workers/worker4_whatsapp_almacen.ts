@@ -9,6 +9,7 @@ export interface AlertaAlmacenParams {
   fecha_entrega: string;
   cliente_nombre: string;
   vendedor_nombre: string;
+  tipo_entrega: string;
 }
 
 /**
@@ -16,12 +17,15 @@ export interface AlertaAlmacenParams {
  * Función interna, no expone endpoint HTTP; se llama desde el Worker 1.
  */
 export async function enviarAlertaAlmacen(env: Env, p: AlertaAlmacenParams): Promise<ResultadoEnvio> {
+  const etiquetaEntrega = p.tipo_entrega === 'tienda' ? '🏬 RECOGE EN TIENDA' : '🚚 Domicilio';
+
   const mensaje = `🔔 *Pedido nuevo para preparar*
 
 Cliente: ${p.cliente_nombre}
 📦 ${p.productos}
 💰 $${p.monto} MXN
-🗓 Entregar: ${p.fecha_entrega}
+🗓 Fecha: ${p.fecha_entrega}
+${etiquetaEntrega}
 👤 Vendedor: ${p.vendedor_nombre}
 
 Marca como 'preparando' en el tablero.`;

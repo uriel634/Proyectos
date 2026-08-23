@@ -17,7 +17,10 @@ export interface RegistrarPedidoInput {
   notas?: string;
   pos_origen?: string;
   pos_ref_id?: string;
+  tipo_entrega?: string;
 }
+
+const TIPOS_ENTREGA_VALIDOS = ['tienda', 'domicilio'] as const;
 
 const CAMPOS_REQUERIDOS = [
   'cliente_nombre',
@@ -37,6 +40,9 @@ function validar(input: Partial<RegistrarPedidoInput>): void {
   }
   if (typeof input.monto !== 'number' || Number.isNaN(input.monto) || input.monto <= 0) {
     throw new ValidationError('monto debe ser un número mayor a 0');
+  }
+  if (input.tipo_entrega && !TIPOS_ENTREGA_VALIDOS.includes(input.tipo_entrega as (typeof TIPOS_ENTREGA_VALIDOS)[number])) {
+    throw new ValidationError(`tipo_entrega debe ser uno de: ${TIPOS_ENTREGA_VALIDOS.join(', ')}`);
   }
 }
 
@@ -65,6 +71,8 @@ export async function registrarPedido(
     await crearCliente(env.DB, clienteId, input.cliente_nombre, input.cliente_telefono, input.cliente_direccion);
   }
 
+  const tipoEntrega = input.tipo_entrega ?? 'domicilio';
+
   const pedidoId = crypto.randomUUID();
   await crearPedido(env.DB, {
     id: pedidoId,
@@ -76,6 +84,7 @@ export async function registrarPedido(
     notas: input.notas ?? null,
     pos_origen: input.pos_origen ?? 'manual',
     pos_ref_id: input.pos_ref_id ?? null,
+    tipo_entrega: tipoEntrega,
   });
 
   const paramsWhatsApp = {
@@ -86,6 +95,7 @@ export async function registrarPedido(
     monto: input.monto,
     fecha_entrega: input.fecha_entrega,
     vendedor_nombre: vendedor.nombre,
+    tipo_entrega: tipoEntrega,
   };
 
   // No bloquea la respuesta del pedido si WhatsApp falla; ambos envíos

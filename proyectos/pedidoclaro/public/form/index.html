@@ -80,6 +80,36 @@
     min-height: 90px;
   }
 
+  .opciones-entrega {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .opcion-entrega {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-field);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .opcion-entrega:has(input:checked) {
+    border-color: var(--accent);
+    background: rgba(255, 92, 0, 0.12);
+  }
+
+  .opcion-entrega input {
+    width: auto;
+    accent-color: var(--accent);
+  }
+
   button {
     width: 100%;
     margin-top: 24px;
@@ -139,6 +169,18 @@
 
       <label for="fecha_entrega">Fecha de entrega</label>
       <input type="date" id="fecha_entrega" name="fecha_entrega" required>
+
+      <label>Tipo de entrega</label>
+      <div class="opciones-entrega">
+        <label class="opcion-entrega">
+          <input type="radio" name="tipo_entrega" value="domicilio" checked>
+          <span>🚚 Domicilio</span>
+        </label>
+        <label class="opcion-entrega">
+          <input type="radio" name="tipo_entrega" value="tienda">
+          <span>🏬 Recoger en tienda</span>
+        </label>
+      </div>
 
       <label for="vendedor_id">Vendedor</label>
       <select id="vendedor_id" name="vendedor_id" required>
