@@ -5,6 +5,7 @@ import { handleConsultarPedidos } from './workers/worker2_pedidos';
 import { handleActualizarEstatus } from './workers/worker5_estatus';
 import { ejecutarReporteMatutino } from './workers/worker6_reporte';
 import { ejecutarSyncYRegistrar, handleSyncPos } from './workers/worker7_sync_pos';
+import { revisarEsperasLargas } from './workers/worker8_alertas_espera';
 
 const CRON_REPORTE_MATUTINO = '0 14 * * *';
 const CRON_SYNC_POS = '*/5 * * * *';
@@ -46,6 +47,7 @@ export default {
       ctx.waitUntil(ejecutarReporteMatutino(env));
     } else if (event.cron === CRON_SYNC_POS) {
       ctx.waitUntil(ejecutarSyncYRegistrar(env));
+      ctx.waitUntil(revisarEsperasLargas(env));
     }
   },
 };

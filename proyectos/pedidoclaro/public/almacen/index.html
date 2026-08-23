@@ -46,6 +46,22 @@
     margin-bottom: 20px;
   }
 
+  .btn-secundario {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-secundario.activo {
+    background: var(--accent);
+    color: #fff;
+  }
+
   .filtros input {
     background: var(--bg-field);
     border: 1px solid var(--border);
@@ -167,6 +183,7 @@
 
   <div class="filtros">
     <input type="date" id="filtro-fecha">
+    <button type="button" id="btn-ver-todos" class="btn-secundario">Ver todos (sin filtro de fecha)</button>
   </div>
 
   <div class="lista" id="lista-pedidos"></div>

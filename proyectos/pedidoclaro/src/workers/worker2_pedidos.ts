@@ -1,5 +1,6 @@
 import type { Env } from '../types';
 import { jsonResponse } from '../lib/cors';
+import { fechaHoyMexico } from '../lib/fecha';
 
 const ESTATUS_POSIBLES = ['nuevo', 'preparando', 'en_camino', 'entregado', 'cancelado'] as const;
 
@@ -24,23 +25,22 @@ interface FilaKpi {
   total: number | null;
 }
 
-function fechaHoy(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export async function handleConsultarPedidos(request: Request, env: Env): Promise<Response> {
   try {
     const url = new URL(request.url);
-    const fecha = url.searchParams.get('fecha') || fechaHoy();
+    const fechaParam = url.searchParams.get('fecha') || fechaHoyMexico();
+    const verTodas = fechaParam === 'todas';
     const estatus = url.searchParams.get('estatus');
     const vendedorId = url.searchParams.get('vendedor_id');
 
-    // KPIs: siempre sobre el día completo, sin aplicar los filtros de estatus/vendedor.
+    // KPIs: siempre sobre el día completo (o todo, si verTodas), sin aplicar
+    // los filtros de estatus/vendedor.
     const kpiRows = await env.DB.prepare(
-      `SELECT estatus, COUNT(*) as n, SUM(monto) as total
-       FROM pedidos WHERE fecha_entrega = ? GROUP BY estatus`
+      verTodas
+        ? `SELECT estatus, COUNT(*) as n, SUM(monto) as total FROM pedidos GROUP BY estatus`
+        : `SELECT estatus, COUNT(*) as n, SUM(monto) as total FROM pedidos WHERE fecha_entrega = ? GROUP BY estatus`
     )
-      .bind(fecha)
+      .bind(...(verTodas ? [] : [fechaParam]))
       .all<FilaKpi>();
 
     const porEstatus: Record<string, number> = {
@@ -61,8 +61,12 @@ export async function handleConsultarPedidos(request: Request, env: Env): Promis
     }
 
     // Listado: aplica todos los filtros recibidos.
-    const condiciones = ['p.fecha_entrega = ?'];
-    const valores: unknown[] = [fecha];
+    const condiciones: string[] = [];
+    const valores: unknown[] = [];
+    if (!verTodas) {
+      condiciones.push('p.fecha_entrega = ?');
+      valores.push(fechaParam);
+    }
     if (estatus) {
       condiciones.push('p.estatus = ?');
       valores.push(estatus);
@@ -72,6 +76,8 @@ export async function handleConsultarPedidos(request: Request, env: Env): Promis
       valores.push(vendedorId);
     }
 
+    const clausulaWhere = condiciones.length > 0 ? `WHERE ${condiciones.join(' AND ')}` : '';
+
     const pedidosResult = await env.DB.prepare(
       `SELECT p.id, c.nombre as cliente_nombre, c.telefono as cliente_telefono,
               v.nombre as vendedor_nombre, p.productos, p.monto, p.fecha_entrega,
@@ -79,7 +85,7 @@ export async function handleConsultarPedidos(request: Request, env: Env): Promis
        FROM pedidos p
        JOIN clientes c ON c.id = p.cliente_id
        JOIN vendedores v ON v.id = p.vendedor_id
-       WHERE ${condiciones.join(' AND ')}
+       ${clausulaWhere}
        ORDER BY p.created_at DESC`
     )
       .bind(...valores)

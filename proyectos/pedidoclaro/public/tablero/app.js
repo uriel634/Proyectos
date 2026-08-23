@@ -11,6 +11,7 @@
   const filtroFecha = document.getElementById('filtro-fecha');
   const filtroEstatus = document.getElementById('filtro-estatus');
   const filtroVendedor = document.getElementById('filtro-vendedor');
+  const btnVerTodos = document.getElementById('btn-ver-todos');
   const tbody = document.getElementById('tbody-pedidos');
   const divVacio = document.getElementById('vacio');
   const divActualizado = document.getElementById('actualizado');
@@ -20,7 +21,14 @@
   const kpiEntregado = document.getElementById('kpi-entregado');
   const kpiMonto = document.getElementById('kpi-monto');
 
-  filtroFecha.value = new Date().toISOString().slice(0, 10);
+  function fechaLocalISO() {
+    const d = new Date();
+    const offsetMs = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offsetMs).toISOString().slice(0, 10);
+  }
+
+  filtroFecha.value = fechaLocalISO();
+  let verTodos = false;
 
   for (const v of VENDEDORES) {
     const opt = document.createElement('option');
@@ -40,7 +48,7 @@
 
   function construirUrl() {
     const params = new URLSearchParams();
-    if (filtroFecha.value) params.set('fecha', filtroFecha.value);
+    params.set('fecha', verTodos ? 'todas' : filtroFecha.value);
     if (filtroEstatus.value) params.set('estatus', filtroEstatus.value);
     if (filtroVendedor.value) params.set('vendedor_id', filtroVendedor.value);
     return `${API_BASE}/pedidos?${params.toString()}`;
@@ -138,6 +146,13 @@
   filtroFecha.addEventListener('change', cargarPedidos);
   filtroEstatus.addEventListener('change', cargarPedidos);
   filtroVendedor.addEventListener('change', cargarPedidos);
+  btnVerTodos.addEventListener('click', () => {
+    verTodos = !verTodos;
+    filtroFecha.disabled = verTodos;
+    btnVerTodos.classList.toggle('activo', verTodos);
+    btnVerTodos.textContent = verTodos ? 'Volver a filtrar por fecha' : 'Ver todos (sin filtro de fecha)';
+    cargarPedidos();
+  });
 
   cargarPedidos();
   setInterval(cargarPedidos, AUTO_REFRESH_MS);

@@ -82,6 +82,13 @@ export async function findPedidoByPosRef(
     .first<{ id: string }>();
 }
 
+export async function logEventoPedido(db: D1Database, pedidoId: string, estatus: string): Promise<void> {
+  await db
+    .prepare('INSERT INTO pedido_eventos (id, pedido_id, estatus) VALUES (?, ?, ?)')
+    .bind(crypto.randomUUID(), pedidoId, estatus)
+    .run();
+}
+
 export interface NuevaNotificacion {
   pedido_id: string | null;
   tipo: string;

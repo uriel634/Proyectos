@@ -1,6 +1,6 @@
 import type { Env } from '../types';
 import { jsonResponse } from '../lib/cors';
-import { crearCliente, crearPedido, findClienteByTelefono, findVendedorActivo } from '../lib/db';
+import { crearCliente, crearPedido, findClienteByTelefono, findVendedorActivo, logEventoPedido } from '../lib/db';
 import { enviarConfirmacionCliente } from './worker3_whatsapp_cliente';
 import { enviarAlertaAlmacen } from './worker4_whatsapp_almacen';
 
@@ -21,6 +21,7 @@ export interface RegistrarPedidoInput {
 }
 
 const TIPOS_ENTREGA_VALIDOS = ['tienda', 'domicilio'] as const;
+const TELEFONO_E164 = /^\+\d{10,15}$/;
 
 const CAMPOS_REQUERIDOS = [
   'cliente_nombre',
@@ -40,6 +41,11 @@ function validar(input: Partial<RegistrarPedidoInput>): void {
   }
   if (typeof input.monto !== 'number' || Number.isNaN(input.monto) || input.monto <= 0) {
     throw new ValidationError('monto debe ser un número mayor a 0');
+  }
+  if (input.cliente_telefono && !TELEFONO_E164.test(input.cliente_telefono)) {
+    throw new ValidationError(
+      'cliente_telefono debe incluir código de país, formato +52XXXXXXXXXX (sin espacios ni guiones)'
+    );
   }
   if (input.tipo_entrega && !TIPOS_ENTREGA_VALIDOS.includes(input.tipo_entrega as (typeof TIPOS_ENTREGA_VALIDOS)[number])) {
     throw new ValidationError(`tipo_entrega debe ser uno de: ${TIPOS_ENTREGA_VALIDOS.join(', ')}`);
@@ -86,6 +92,7 @@ export async function registrarPedido(
     pos_ref_id: input.pos_ref_id ?? null,
     tipo_entrega: tipoEntrega,
   });
+  await logEventoPedido(env.DB, pedidoId, 'nuevo');
 
   const paramsWhatsApp = {
     pedido_id: pedidoId,

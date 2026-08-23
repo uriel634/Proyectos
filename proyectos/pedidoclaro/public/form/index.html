@@ -159,7 +159,7 @@
       <input type="text" id="cliente_nombre" name="cliente_nombre" required autocomplete="off">
 
       <label for="cliente_telefono">Teléfono del cliente</label>
-      <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52..." required autocomplete="off">
+      <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+52..." pattern="\+\d{10,15}" title="Incluye el código de país, ej. +525512345678 (sin espacios ni guiones)" required autocomplete="off">
 
       <label for="productos">Productos</label>
       <textarea id="productos" name="productos" placeholder="2 cajas de refresco, 1 paquete de servilletas..." required></textarea>

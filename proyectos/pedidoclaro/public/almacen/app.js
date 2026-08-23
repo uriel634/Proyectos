@@ -1,8 +1,17 @@
 (function () {
   const filtroFecha = document.getElementById('filtro-fecha');
+  const btnVerTodos = document.getElementById('btn-ver-todos');
   const listaPedidos = document.getElementById('lista-pedidos');
   const divVacio = document.getElementById('vacio');
   const divActualizado = document.getElementById('actualizado');
+
+  function fechaLocalISO() {
+    const d = new Date();
+    const offsetMs = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offsetMs).toISOString().slice(0, 10);
+  }
+
+  let verTodos = false;
 
   const ETIQUETAS_ESTATUS = { nuevo: 'Nuevo', preparando: 'Preparando' };
 
@@ -34,7 +43,7 @@
     return { clase: 'espera-critico', texto: `🔴 ${minutos} min preparando` };
   }
 
-  filtroFecha.value = new Date().toISOString().slice(0, 10);
+  filtroFecha.value = fechaLocalISO();
 
   async function cambiarEstatus(pedidoId, nuevoEstatus, boton) {
     boton.disabled = true;
@@ -112,7 +121,7 @@
 
   async function cargarPedidos() {
     try {
-      const params = new URLSearchParams({ fecha: filtroFecha.value });
+      const params = new URLSearchParams({ fecha: verTodos ? 'todas' : filtroFecha.value });
       const res = await fetch(`${API_BASE}/pedidos?${params.toString()}`);
       const data = await res.json();
 
@@ -137,6 +146,13 @@
   }
 
   filtroFecha.addEventListener('change', cargarPedidos);
+  btnVerTodos.addEventListener('click', () => {
+    verTodos = !verTodos;
+    filtroFecha.disabled = verTodos;
+    btnVerTodos.classList.toggle('activo', verTodos);
+    btnVerTodos.textContent = verTodos ? 'Volver a filtrar por fecha' : 'Ver todos (sin filtro de fecha)';
+    cargarPedidos();
+  });
 
   cargarPedidos();
   setInterval(cargarPedidos, AUTO_REFRESH_MS);

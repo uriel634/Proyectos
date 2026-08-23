@@ -1,6 +1,6 @@
 import type { Env } from '../types';
 import { jsonResponse } from '../lib/cors';
-import { logNotificacion } from '../lib/db';
+import { logEventoPedido, logNotificacion } from '../lib/db';
 import { enviarWhatsApp } from '../lib/twilio';
 
 const ESTATUS_VALIDOS = ['preparando', 'en_camino', 'entregado', 'cancelado'] as const;
@@ -9,6 +9,7 @@ type EstatusValido = (typeof ESTATUS_VALIDOS)[number];
 interface FilaPedido {
   id: string;
   monto: number;
+  estatus: string;
   cliente_nombre: string;
   cliente_telefono: string;
   tipo_entrega: string;
@@ -32,7 +33,7 @@ export async function handleActualizarEstatus(request: Request, env: Env, pedido
 
   try {
     const pedido = await env.DB.prepare(
-      `SELECT p.id, p.monto, p.tipo_entrega, c.nombre as cliente_nombre, c.telefono as cliente_telefono
+      `SELECT p.id, p.monto, p.estatus, p.tipo_entrega, c.nombre as cliente_nombre, c.telefono as cliente_telefono
        FROM pedidos p JOIN clientes c ON c.id = p.cliente_id
        WHERE p.id = ?`
     )
@@ -43,9 +44,17 @@ export async function handleActualizarEstatus(request: Request, env: Env, pedido
       return jsonResponse({ success: false, error: 'Pedido no encontrado' }, 404);
     }
 
-    await env.DB.prepare(`UPDATE pedidos SET estatus = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`)
+    // Idempotente: un doble tap o un reintento de red no debe reenviar el WhatsApp.
+    if (pedido.estatus === estatus) {
+      return jsonResponse({ success: true, pedido_id: pedidoId, estatus_nuevo: estatus });
+    }
+
+    await env.DB.prepare(
+      `UPDATE pedidos SET estatus = ?, updated_at = CURRENT_TIMESTAMP, alerta_espera_enviada = 0 WHERE id = ?`
+    )
       .bind(estatus, pedidoId)
       .run();
+    await logEventoPedido(env.DB, pedidoId, estatus);
 
     const esTienda = pedido.tipo_entrega === 'tienda';
 
@@ -80,6 +89,18 @@ ${pedido.cliente_nombre}, confirmamos que tu pedido fue entregado. ¡Gracias por
       await logNotificacion(env.DB, {
         pedido_id: pedidoId,
         tipo: 'entregado',
+        destinatario: pedido.cliente_telefono,
+        mensaje,
+        enviado: resultado.enviado,
+      });
+    } else if (estatus === 'cancelado') {
+      const mensaje = `❌ *Pedido cancelado*
+
+${pedido.cliente_nombre}, tu pedido fue cancelado. Si tienes dudas, contáctanos.`;
+      const resultado = await enviarWhatsApp(env, pedido.cliente_telefono, mensaje);
+      await logNotificacion(env.DB, {
+        pedido_id: pedidoId,
+        tipo: 'cancelado',
         destinatario: pedido.cliente_telefono,
         mensaje,
         enviado: resultado.enviado,

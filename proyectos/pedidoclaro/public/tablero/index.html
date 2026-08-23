@@ -86,6 +86,22 @@
     font-size: 0.9rem;
   }
 
+  .btn-secundario {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-secundario.activo {
+    background: var(--accent);
+    color: #fff;
+  }
+
   .tabla-wrap {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -190,6 +206,7 @@
     <select id="filtro-vendedor">
       <option value="">Todos los vendedores</option>
     </select>
+    <button type="button" id="btn-ver-todos" class="btn-secundario">Ver todos (sin filtro de fecha)</button>
   </div>
 
   <div class="tabla-wrap">
