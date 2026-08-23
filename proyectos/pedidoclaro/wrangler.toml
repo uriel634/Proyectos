@@ -15,7 +15,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "pedidoclaro-db"
-database_id = "REEMPLAZA_CON_EL_ID_DE_TU_BASE_D1"
+database_id = "c43167c8-f319-4d05-8244-d900ba921e04"
 
 [triggers]
 crons = [
