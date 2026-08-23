@@ -23,5 +23,11 @@ crons = [
   "*/5 * * * *", # Worker 7 — sync POS
 ]
 
+# Workers Logs — deja ver en vivo los console.error/console.log del Worker
+# (útil para diagnosticar por qué falla un envío de WhatsApp).
+[observability]
+enabled = true
+head_sampling_rate = 1
+
 # Los secrets (credenciales, tokens, teléfonos) NO se definen aquí.
 # Se configuran con `wrangler secret put <NOMBRE>` — ver README.md.
