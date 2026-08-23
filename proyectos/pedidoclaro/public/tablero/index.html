@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PedidoClaro — Tablero</title>
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --bg-card: #161616;
+    --bg-field: #1F1F1F;
+    --border: #2A2A2A;
+    --text: #F2F2F2;
+    --text-dim: #9A9A9A;
+    --accent: #FF5C00;
+
+    --c-nuevo: #4DA3FF;
+    --c-preparando: #FFC94D;
+    --c-en_camino: #FF5C00;
+    --c-entregado: #2ECC71;
+    --c-cancelado: #FF4D4D;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 20px 16px 64px;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    margin: 0 0 4px;
+  }
+
+  .subtitulo {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 0 0 20px;
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .kpi {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .kpi .valor {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .kpi .etiqueta {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+
+  .kpi.accent .valor { color: var(--accent); }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .filtros input, .filtros select {
+    background: var(--bg-field);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .tabla-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  th {
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  td.productos {
+    white-space: normal;
+    min-width: 200px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0D0D0D;
+  }
+
+  .badge-nuevo { background: var(--c-nuevo); }
+  .badge-preparando { background: var(--c-preparando); }
+  .badge-en_camino { background: var(--c-en_camino); }
+  .badge-entregado { background: var(--c-entregado); }
+  .badge-cancelado { background: var(--c-cancelado); }
+
+  select.cambiar-estatus {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    padding: 6px 8px;
+  }
+
+  .vacio {
+    padding: 32px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .actualizado {
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <h1>Tablero de pedidos</h1>
+  <p class="subtitulo">PedidoClaro · Vista del dueño</p>
+
+  <div class="kpis">
+    <div class="kpi accent">
+      <div class="valor" id="kpi-total">—</div>
+      <div class="etiqueta">Pedidos hoy</div>
+    </div>
+    <div class="kpi">
+      <div class="valor" id="kpi-preparando">—</div>
+      <div class="etiqueta">En preparación</div>
+    </div>
+    <div class="kpi">
+      <div class="valor" id="kpi-entregado">—</div>
+      <div class="etiqueta">Entregados</div>
+    </div>
+    <div class="kpi">
+      <div class="valor" id="kpi-monto">—</div>
+      <div class="etiqueta">Monto total del día</div>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <input type="date" id="filtro-fecha">
+    <select id="filtro-estatus">
+      <option value="">Todos los estatus</option>
+      <option value="nuevo">Nuevo</option>
+      <option value="preparando">Preparando</option>
+      <option value="en_camino">En camino</option>
+      <option value="entregado">Entregado</option>
+      <option value="cancelado">Cancelado</option>
+    </select>
+    <select id="filtro-vendedor">
+      <option value="">Todos los vendedores</option>
+    </select>
+  </div>
+
+  <div class="tabla-wrap">
+    <table id="tabla-pedidos">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Producto</th>
+          <th>Vendedor</th>
+          <th>Monto</th>
+          <th>Entrega</th>
+          <th>Estatus</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-pedidos"></tbody>
+    </table>
+    <div class="vacio" id="vacio" style="display:none;">No hay pedidos para este filtro.</div>
+  </div>
+
+  <p class="actualizado" id="actualizado"></p>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
