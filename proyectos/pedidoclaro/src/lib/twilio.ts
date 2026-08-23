@@ -27,11 +27,15 @@ export async function enviarWhatsApp(env: Env, to: string, body: string): Promis
 
     if (!res.ok) {
       const texto = await res.text();
-      return { enviado: false, error: `Twilio respondió ${res.status}: ${texto}` };
+      const error = `Twilio respondió ${res.status}: ${texto}`;
+      console.error('Fallo al enviar WhatsApp a', to, '—', error);
+      return { enviado: false, error };
     }
 
     return { enviado: true };
   } catch (err) {
-    return { enviado: false, error: err instanceof Error ? err.message : 'Error desconocido al llamar a Twilio' };
+    const error = err instanceof Error ? err.message : 'Error desconocido al llamar a Twilio';
+    console.error('Fallo al enviar WhatsApp a', to, '—', error);
+    return { enviado: false, error };
   }
 }
