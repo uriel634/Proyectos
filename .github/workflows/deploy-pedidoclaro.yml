@@ -50,6 +50,12 @@ jobs:
       - name: Instalar dependencias
         run: npm install
 
+      - name: Crear proyecto de Pages si no existe
+        run: npx wrangler pages project create pedidoclaro-frontend --production-branch=main || true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Deploy Pages
         run: npx wrangler pages deploy public --project-name=pedidoclaro-frontend --branch=main
         env:
