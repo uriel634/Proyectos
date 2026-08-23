@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>PedidoClaro — Almacén</title>
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --bg-card: #161616;
+    --bg-field: #1F1F1F;
+    --border: #2A2A2A;
+    --text: #F2F2F2;
+    --text-dim: #9A9A9A;
+    --accent: #FF5C00;
+    --accent-dim: #C94800;
+    --c-nuevo: #4DA3FF;
+    --c-preparando: #FFC94D;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 20px 16px 64px;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    margin: 0 0 4px;
+  }
+
+  .subtitulo {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin: 0 0 20px;
+  }
+
+  .filtros {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .filtros input {
+    background: var(--bg-field);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pedido {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .pedido-cabeza {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .pedido-cliente {
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .pedido-entrega {
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    margin-top: 2px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0D0D0D;
+    white-space: nowrap;
+  }
+
+  .badge-nuevo { background: var(--c-nuevo); }
+  .badge-preparando { background: var(--c-preparando); }
+
+  .pedido-productos {
+    white-space: pre-wrap;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  .pedido-notas {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  button.accion {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button.accion:active { background: var(--accent-dim); }
+  button.accion:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .vacio {
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  .actualizado {
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+  <h1>Pedidos por preparar</h1>
+  <p class="subtitulo">PedidoClaro · Vista de almacén</p>
+
+  <div class="filtros">
+    <input type="date" id="filtro-fecha">
+  </div>
+
+  <div class="lista" id="lista-pedidos"></div>
+  <div class="vacio" id="vacio" style="display:none;">No hay pedidos pendientes de preparar para esta fecha. 🎉</div>
+
+  <p class="actualizado" id="actualizado"></p>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
