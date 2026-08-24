@@ -6,6 +6,13 @@ export interface ResultadoEnvio {
 }
 
 export async function enviarWhatsApp(env: Env, to: string, body: string): Promise<ResultadoEnvio> {
+  // Fase sin mensajería: si Twilio no está configurado, no lo intenta —
+  // evita latencia y ruido de errores en una etapa donde solo se quiere
+  // el control operativo (registro, cronómetro de espera, tablero).
+  if (!env.TWILIO_ACCOUNT_SID || !env.TWILIO_AUTH_TOKEN || !env.TWILIO_WHATSAPP_FROM) {
+    return { enviado: false, error: 'Twilio no configurado' };
+  }
+
   const url = `https://api.twilio.com/2010-04-01/Accounts/${env.TWILIO_ACCOUNT_SID}/Messages.json`;
   const auth = btoa(`${env.TWILIO_ACCOUNT_SID}:${env.TWILIO_AUTH_TOKEN}`);
 
